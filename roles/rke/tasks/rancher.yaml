@@ -1,0 +1,41 @@
+---
+
+- name: download rke
+  get_url:
+    url: "{{ rke_binary_url }}"
+    
+    dest: /usr/local/bin/rke
+    mode: "+rx"
+  register: rke_binary
+
+- name: check if conf dir exists
+  file:
+    path: "{{ rke_config_dir }}"
+    state: directory
+
+- name: rke conf file
+  template:
+    src: rke_cluster.yml
+    dest: "{{ rke_config_dir }}/cluster.yml"
+    mode: 0664
+  register: rke_cluster_config
+ 
+
+- name: install kubectl
+  get_url:
+    url: "https://storage.googleapis.com/kubernetes-release/release/v{{ kubectl_version }}/bin/linux/amd64/kubectl"
+    dest: /usr/local/bin/kubectl
+    force: yes
+    mode: "+rx"
+
+- name: check if .kube exists
+  file:
+    path: "{{ ansible_env.HOME }}/.kube"
+    state: directory
+
+- name: relocate kube conf
+  copy:
+    remote_src: yes
+    src: "{{ rke_config_dir }}/cluster.yml"
+    dest: "{{ ansible_env.HOME }}/.kube/config"
+
