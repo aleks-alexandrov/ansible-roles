@@ -1,0 +1,35 @@
+---
+
+        - name: NFS server installed
+          ansible.builtin.apt:
+               name:
+                 - nfs-kernel-server
+               state: latest
+
+        - name: create nfs directory
+          file:
+                  path: /mnt/site_contents/
+                  state: directory
+                  owner: nobody
+                  group: nogroup
+                  mode: '0777'
+                  recurse: yes
+
+        - name: test page
+          copy:
+                  src: "/home/aleks.alexandrov/DevOps/Lab-Projects/LAB4_22.11.2022/ansible/index.html"
+                  dest: "/mnt/site_contents/index.html"
+
+
+
+        - name: save changes to /etc/exports
+          ansible.builtin.lineinfile:
+                  path: /etc/exports
+                  state: present
+                  line: '/mnt/site_contents/ 10.83.0.2/32 10.83.0.26/32 10.83.0.29/32 10.83.0.24/32(rw,sync,no_root_squash,no_subtree_check)'
+
+          notify: restart NFS
+
+
+        - name: export the mount
+          shell: "exportfs -rav"
