@@ -1,0 +1,30 @@
+---
+
+
+        - name: intall nfs-common
+          apt: name=nfs-common state=latest
+
+        - name: create nfs directory
+          file:
+                  path: /mnt/site_contents/
+                  state: directory
+                  owner: nobody
+                  group: nogroup
+                  mode: '0755'
+                  recurse: yes
+
+
+        - name: mount the NFS volume
+          mount:
+                  fstype: nfs
+                  opts: defaults
+                  state: mounted
+                  src: "10.83.0.30:/mnt/site_contents/"
+                  path: "/mnt/site_contents/"
+
+
+        - name: Save mount in fstab
+          ansible.builtin.blockinfile:
+                  path: /etc/fstab
+                  block: |
+                          10.83.0.30:/mnt/site_contents/    /mnt/site_contents/ nfs auto,nofail,noatime,nolock,intr,tcp,actimeo=1800 0 0
