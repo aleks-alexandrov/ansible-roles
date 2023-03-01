@@ -1,0 +1,16 @@
+---
+
+        - name: install haproxy
+          ansible.builtin.apt:
+                  name: haproxy
+                  state: present
+
+        - name: set the HAProxy configuration
+          template:
+                  src: "/home/aleks.alexandrov/ansible/roles/haproxy/templates/haproxy.cfg.j2"
+                  dest: "/etc/haproxy/haproxy.cfg"
+          
+
+          notify:
+                  - restart haproxy
+
