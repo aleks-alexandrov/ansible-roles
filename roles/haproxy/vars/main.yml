@@ -1,0 +1,3 @@
+---
+
+haproxy_conf: "/home/aleks.alexandrov/ansible/roles/haproxy/templates/haproxy.cfg.j2"
