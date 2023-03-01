@@ -1,0 +1,8 @@
+---
+
+- name: install prerequisites
+  include_tasks: prerequisites.yml
+
+- name: install rke
+  include_tasks: rancher.yml
+  when: inventory_hostname == rke_controller_hostname
